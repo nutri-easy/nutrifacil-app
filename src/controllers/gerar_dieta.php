@@ -69,8 +69,6 @@ $dietMap = [
 $chosenDiet = $_SESSION['dieta'] ?? 'Mediterrânea';
 $allowedByDiet = $dietMap[$chosenDiet] ?? $dietMap['Mediterrânea'];
 
-$excludeRegexp = !empty($alergias_array) ? implode('|', array_map('preg_quote', $alergias_array)) : '.*^$';
-
 $refeicoes_dia = [];
 
 foreach ($meals as $titulo => $pct) {
@@ -82,22 +80,34 @@ foreach ($meals as $titulo => $pct) {
     foreach ($prioridadePorRefeicao[$titulo] as $cat) {
         if ($itensAdicionados >= $maxItensPorRefeicao[$titulo]) break;
 
+        $whereAlergia = "";
+        $params = [];
+
+        if (!empty($alergias_array)) {
+            $whereAlergiaParts = [];
+            foreach ($alergias_array as $alergia) {
+                $whereAlergiaParts[] = " (alergias IS NULL OR alergias NOT LIKE ?) ";
+                $params[] = "%$alergia%";
+            }
+            $whereAlergia = " AND " . implode(" AND ", $whereAlergiaParts);
+        }
+
         if ($cat === 'CarboidratoPrioritario') {
             $sql = "
                 SELECT nome, calorias
                 FROM alimentos
                 WHERE categoria = 'Carboidrato'
                   AND (nome LIKE '%Pão%' OR nome LIKE '%Aveia%')
-                  AND nome NOT REGEXP ?
+                  $whereAlergia
                 ORDER BY ABS(calorias - ?)
                 LIMIT 1
             ";
+            $params[] = $calPorItem;
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$excludeRegexp, $calPorItem]);
+            $stmt->execute($params);
 
         } elseif ($cat === 'Proteína Animal' && $chosenDiet !== 'Vegetariana') {
             if (in_array($titulo, ['Café da Manhã', 'Lanche da Tarde'])) {
-                // Prioriza proteína magra
                 $sql = "
                     SELECT nome, calorias
                     FROM alimentos
@@ -107,26 +117,26 @@ foreach ($meals as $titulo => $pct) {
                           nome LIKE '%Atum%' OR 
                           nome LIKE '%Ovo%'
                       )
-                      AND nome NOT REGEXP ?
+                      $whereAlergia
                     ORDER BY ABS(calorias - ?)
                     LIMIT 1
                 ";
+                $params[] = $calPorItem;
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([$excludeRegexp, $calPorItem]);
+                $stmt->execute($params);
             } else {
-                // Proteína normal
                 $sql = "
                     SELECT nome, calorias
                     FROM alimentos
                     WHERE categoria = ?
-                      AND nome NOT REGEXP ?
+                      $whereAlergia
                     ORDER BY ABS(calorias - ?)
                     LIMIT 1
                 ";
+                $params = array_merge([$cat], $params, [$calPorItem]);
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([$cat, $excludeRegexp, $calPorItem]);
+                $stmt->execute($params);
             }
-
         } else {
             if (!in_array($cat, $allowedByDiet)) continue;
 
@@ -137,11 +147,11 @@ foreach ($meals as $titulo => $pct) {
                     FROM alimentos
                     WHERE categoria = ?
                       AND nome IN ($placeholders)
-                      AND nome NOT REGEXP ?
+                      $whereAlergia
                     ORDER BY ABS(calorias - ?)
                     LIMIT 1
                 ";
-                $params = array_merge([$cat], $preferencias[$cat], [$excludeRegexp, $calPorItem]);
+                $params = array_merge([$cat], $preferencias[$cat], $params, [$calPorItem]);
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
             } else {
@@ -149,12 +159,13 @@ foreach ($meals as $titulo => $pct) {
                     SELECT nome, calorias
                     FROM alimentos
                     WHERE categoria = ?
-                      AND nome NOT REGEXP ?
+                      $whereAlergia
                     ORDER BY ABS(calorias - ?)
                     LIMIT 1
                 ";
+                $params = array_merge([$cat], $params, [$calPorItem]);
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([$cat, $excludeRegexp, $calPorItem]);
+                $stmt->execute($params);
             }
         }
 

@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <p><strong>⚠️ Alergias/Intolerâncias:</strong></p>
             <?php
-            $alergias = ['Lactose', 'Glúten', 'Proteína do leite', 'Ovo', 'Frutos do mar', 'Nenhuma'];
+            $alergias = ['Lactose', 'Glúten', 'Proteína do leite', 'Ovo', 'Frutos do mar', 'Soja', 'Oleaginosa', 'Nenhuma'];
             foreach ($alergias as $item) {
                 echo "<label><input type='checkbox' name='alergias[]' value='" . htmlspecialchars($item) . "'> " . htmlspecialchars($item) . "</label><br>";
             }

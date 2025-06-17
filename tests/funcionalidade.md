@@ -54,5 +54,5 @@ Funcionalidade: Registro de alergias/intolerâncias
 
 | ID do Bug | Caso de Teste Relacionado | Descrição do Problema | Severidade | Status | Responsável | Link |
 |------------|--------------------------|-----------------------|-------------|---------|--------------|-------|
-| BUG-01 | FT-03 | IMC calculado incorretamente para valores extremos | Alta | Aberto | Caio Magalhães | https://github.com/nutri-easy/nutrifacil-app/issues/1|
-| BUG-02 | FT-05 | Alimentos com lactose ainda aparecem no plano | Média | Aberto | Caio Magalhães | https://github.com/nutri-easy/nutrifacil-app/issues/2 |
+| BUG-01 | FT-03 | IMC calculado incorretamente para valores extremos | Alta | Finalizado | Caio Magalhães | https://github.com/nutri-easy/nutrifacil-app/issues/1|
+| BUG-02 | FT-05 | Alimentos com lactose ainda aparecem no plano | Média | Finalizado | Caio Magalhães | https://github.com/nutri-easy/nutrifacil-app/issues/2 |
