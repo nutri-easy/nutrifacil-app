@@ -107,7 +107,7 @@ Para mais informações ou permissões de uso, entre em contato:
 - Caio Magalhães Rabelo Oliveira  
 - Marcos Paulo Correa Mendes  
 - Caio Henrique Fernandes de Almeida  
-- Roger Freitas  
+- Roger Freitas Araujo 
 
 ---
 

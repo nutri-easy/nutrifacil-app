@@ -2,24 +2,25 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../config.php';
-// require_once __DIR__ . '/funcoes_email.php';
+require_once __DIR__ . '/funcoes_email.php'; // Inclui o envio de e-mail
 
 if (empty($_SESSION['pagamento_confirmado'])) {
     header('Location: /dashboard');
     exit;
 }
 
-$dados      = $_SESSION['dados'] ?? [];
-$nome       = $dados['nome'] ?? 'Usuário';
-$email      = $_SESSION['email'] ?? 'contato@exemplo.com';
-$whatsapp   = $_SESSION['whatsapp'] ?? '';
-$dieta      = $_SESSION['dieta'] ?? '';
-$refeicoes  = $_SESSION['refeicoes_dia'] ?? [];
+$dados     = $_SESSION['dados'] ?? [];
+$nome      = $dados['nome'] ?? 'Usuário';
+$email     = $_SESSION['email'] ?? '';
+$telefone  = $_SESSION['telefone'] ?? '';
+$dieta     = $_SESSION['dieta'] ?? '';
+$refeicoes = $_SESSION['refeicoes_dia'] ?? [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $opcao = $_POST['opcao'] ?? '';
+    $erroEnvio = '';
 
-    // monta o corpo da mensagem
+    // Gera o plano em texto
     ob_start();
     echo "Plano Alimentar – NutriFácil\n\n";
     echo "Nome: {$nome}\n";
@@ -38,26 +39,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mensagem = trim(ob_get_clean());
 
     if ($opcao === 'email') {
-        $assunto = "Seu Plano Alimentar NutriFácil";
-        $html    = nl2br(htmlspecialchars($mensagem));
-        $enviado = enviar_email($email, $assunto, $html);
-
-        if ($enviado) {
-            $_SESSION['envio_realizado'] = true;
-            $_SESSION['envio_tipo'] = 'email';
-            header('Location: /dashboard');
-            exit;
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $erroEnvio = "E-mail não informado ou inválido. Atualize seu cadastro.";
         } else {
-            $erroEnvio = "Erro ao enviar e-mail.";
+            $assunto = "Seu Plano Alimentar NutriFácil";
+            $html = nl2br(htmlspecialchars($mensagem));
+            $enviado = enviar_email($email, $assunto, $html);
+
+            if ($enviado) {
+                $_SESSION['envio_realizado'] = true;
+                $_SESSION['envio_tipo'] = 'email';
+                header('Location: /dashboard');
+                exit;
+            } else {
+                $erroEnvio = "Erro ao enviar e-mail. Verifique o log.";
+            }
         }
-
     } elseif ($opcao === 'whatsapp') {
-        if (empty($whatsapp)) {
-            $erroEnvio = "WhatsApp não informado em seu cadastro.";
+        if (empty($telefone)) {
+            $erroEnvio = "Telefone não informado em seu cadastro.";
         } else {
-            $phone = preg_replace('/\D+/', '', $whatsapp);
+            $phone = preg_replace('/\D+/', '', $telefone);
             $texto = urlencode("Olá {$nome}, aqui está seu plano alimentar da NutriFácil:\n\n{$mensagem}");
-            $link  = "https://api.whatsapp.com/send?phone=55{$phone}&text={$texto}";
+            $link = "https://api.whatsapp.com/send?phone=55{$phone}&text={$texto}";
 
             $_SESSION['envio_realizado'] = true;
             $_SESSION['envio_tipo'] = 'whatsapp';
@@ -69,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

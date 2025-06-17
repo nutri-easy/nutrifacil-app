@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
         <div style="margin:20px 0; font-size: 15px;">
             📧 Ou envie um e-mail para:<br>
-            <a href="mailto:suporte@nutrifacil.com" style="color:#0066cc;font-weight:bold;">suporte@nutrifacil.com</a>
+            <a href="mailto:nutrieasii@gmail.com" style="color:#0066cc;font-weight:bold;">nutrieasii@gmail.com</a>
         </div>
 
         <a href="/dashboard"

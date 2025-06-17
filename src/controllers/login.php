@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 2) grava dados de login
         $_SESSION['usuario']    = $usuario['nome'];
         $_SESSION['usuario_id'] = $usuario['id'];
+        $_SESSION['telefone'] = $usuario['telefone'];
         $_SESSION['is_admin']   = $usuario['is_admin'] ?? 0;
 
         // 3) puxa última avaliação daquele usuário

@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome']);
     $email = strtolower(trim($_POST['email']));
     $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+    $telefone = trim($_POST['telefone']);
 
     try {
         $pdo = db_connect();
@@ -20,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erro = "E-mail já cadastrado.";
         } else {
             // Cadastra novo usuário
-            $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)");
-            $stmt->execute([$nome, $email, $senha]);
+            $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, senha, telefone) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$nome, $email, $senha, $telefone]);
 
             $usuario_id = $pdo->lastInsertId();
 
@@ -29,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario'] = $nome;
             $_SESSION['usuario_id'] = $usuario_id;
             $_SESSION['is_admin'] = 0;
+            $_SESSION['telefone'] = $telefone;
+            $_SESSION['email'] = $email;
 
             // Redireciona para /dados
             header("Location: /dados");
@@ -41,8 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
-<!-- cadastro.php -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -85,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .form-container input[type="text"],
         .form-container input[type="email"],
-        .form-container input[type="password"] {
+        .form-container input[type="password"],
+        .form-container input[type="tel"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
@@ -128,9 +130,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>NUTRI<span style="color:#555">FÁCIL</span></h1>
     <p class="sub">Projeto A3 - Una | 2025</p>
     <p style="margin:20px 0;font-weight:500;">📝 Cadastro</p>
+
+    <?php if ($erro): ?>
+        <p style="color:red;"><?= htmlspecialchars($erro) ?></p>
+    <?php endif; ?>
+
     <form method="post">
         <input type="text" name="nome" placeholder="Nome completo" required>
         <input type="email" name="email" placeholder="E-mail" required>
+        <input type="tel" name="telefone" placeholder="Número de WhatsApp" required>
         <input type="password" name="senha" placeholder="Senha" required>
         <button type="submit">Cadastrar</button>
     </form>
