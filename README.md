@@ -1,17 +1,18 @@
 
 # 🍽️ NutriFácil
 
-**NutriFácil** é um sistema web para criação de planos alimentares personalizados. O usuário informa dados como peso, altura, idade, sexo, tipo de dieta e preferências alimentares. O sistema gera um plano nutricional adequado, que pode ser enviado por e-mail ou WhatsApp.
+**NutriFácil** é um sistema web para criação de planos alimentares personalizados.  
+O usuário informa dados como peso, altura, idade, sexo, tipo de dieta, preferências e restrições alimentares. O sistema gera um plano nutricional adequado, que pode ser enviado por e-mail ou WhatsApp.
 
 ---
 
 ## 🚀 Tecnologias usadas
 
 - **PHP 8.x**
-- **MySQL / MariaDB**
+- **MySQL**
 - **HTML5, CSS3, JavaScript**
-- **PHPMailer** (para envio de e-mails)
-- **Git + GitHub Projects** (controle de versão e gerenciamento)
+- **PHPMailer** (envio de e-mails)
+- **Git + GitHub Projects** (controle de versão e gestão de tarefas)
 
 ---
 
@@ -36,15 +37,15 @@ $banco = "seu_banco";
 ```bash
 php -S localhost:8000
 ```
-➡ Acesse em [http://localhost:8000](http://localhost:8000)
+➡ Acesse: [http://localhost:8000](http://localhost:8000)
 
 ---
 
 ## 🧪 Como rodar os testes
 
-- **Funcionalidade:** acesse `tests/funcionalidade.md`, siga os cenários em Gherkin e registre o resultado.
-- **Usabilidade:** use os formulários em `tests/usabilidade/` para aplicar os testes com participantes.
-- **Bugs:** registre os bugs encontrados como issues no GitHub com links no relatório de testes.
+- **Funcionalidade:** Acesse `tests/funcionalidade.md`, siga os cenários Gherkin e registre os resultados.
+- **Usabilidade:** Use os formulários em `tests/usabilidade/` durante os testes com participantes.
+- **Bugs:** Registre os bugs como *issues* no GitHub e referencie no relatório de testes.
 
 ---
 
@@ -67,6 +68,7 @@ nutrifacil/
 ├── slides/
 │   └── apresentacao.pdf
 ├── database.sql
+├── LICENSE
 ├── .gitignore
 ├── .gitattributes
 └── README.md
@@ -82,15 +84,16 @@ nutrifacil/
 
 ## 👥 Equipe
 
-- Nome 1
-- Nome 2
-- Nome 3
-- Nome 4
-- Nome 5
-- Nome 6
+- Caio Magalhães Rabelo Oliveira  
+- Marcos Paulo Correa Mendes  
+- Caio Henrique Fernandes de Almeida  
+- Roger Freitas  
 
 ---
 
 ## 📌 Observações
 
-Este projeto foi desenvolvido como atividade acadêmica para prática de desenvolvimento web, testes de usabilidade e trabalho colaborativo com GitHub Projects.
+Este projeto foi desenvolvido como atividade acadêmica para prática de:
+- Desenvolvimento web
+- Testes de usabilidade
+- Trabalho colaborativo com GitHub Projects
