@@ -1,0 +1,70 @@
+
+body.login-wrapper {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #f5f5f5, #e8f5e9);
+    margin: 0;
+    padding: 0;
+}
+
+input[type="number"], select, input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+button.btn-calcular {
+    background-color: #2b7a2b;
+    color: white;
+    font-size: 18px;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-calcular:hover {
+    background-color: #256b25;
+}
+
+form > p, form > div > label:first-child {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2b7a2b;
+}
+
+h2 span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+@media (max-width: 600px) {
+    body .login-wrapper > div {
+        padding: 20px;
+        margin: 20px auto;
+        border-radius: 10px;
+    }
+    button.btn-calcular {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
