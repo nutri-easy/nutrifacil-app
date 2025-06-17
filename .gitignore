@@ -1,0 +1,23 @@
+# Sistema
+/vendor/
+/node_modules/
+/*.log
+*.log
+
+# IDEs e editores
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ambientes locais
+.env
+*.bak
+*.tmp
+*.swp
+
+# XAMPP e arquivos locais
+xampp/

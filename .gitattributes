@@ -1,0 +1,2 @@
+# Forçar LF nos finais de linha para evitar avisos no Windows
+* text=auto eol=lf
