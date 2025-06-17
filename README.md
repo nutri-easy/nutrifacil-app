@@ -82,6 +82,26 @@ nutrifacil/
 
 ---
 
+## 🌐 Demo
+
+👉 *link da demo disponivel em breve*  
+
+---
+
+## 📜 Licença
+
+Este projeto está protegido por **All Rights Reserved**.  
+Consulte o arquivo [LICENSE](./LICENSE) para mais informações.
+
+---
+
+## 📬 Contato
+
+Para mais informações ou permissões de uso, entre em contato:  
+📧 **caiomagalhaesrabelooliveira10@gmail.com**
+
+---
+
 ## 👥 Equipe
 
 - Caio Magalhães Rabelo Oliveira  
