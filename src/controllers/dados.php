@@ -14,12 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $altura    = intval($_POST['altura']);
     $idade     = intval($_POST['idade']);
     $sexo      = $_POST['sexo'] ?? '';
-    $atividade = floatval($_POST['atividade'] ?? 1.2); // Fator de atividade física
+    $atividade = floatval($_POST['atividade'] ?? 1.2);
     $objetivo  = $_POST['objetivo'] ?? '';
     $tempo     = intval($_POST['tempo']);
     $dieta     = $_POST['dieta'] ?? '';
 
-    // Captura as preferências
     $preferencias = [
         'Proteínas'    => array_filter(array_map('trim', explode(',', $_POST['Proteínas'] ?? ''))),
         'Carboidratos' => array_filter(array_map('trim', explode(',', $_POST['Carboidratos'] ?? ''))),
@@ -29,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
     $alergias = $_POST['alergias'] ?? [];
 
-    // Armazena tudo na sessão
     $_SESSION['dados'] = [
         'nome'      => $_SESSION['usuario'],
         'peso'      => $peso,
@@ -38,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'sexo'      => $sexo,
         'atividade' => $atividade,
         'objetivo'  => $objetivo,
-        
     ];
     $_SESSION['tempo']      = $tempo;
     $_SESSION['dieta']      = $dieta;
@@ -67,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dieta,
             $preferencias_completas,
             implode(',', $alergias),
-            
         ]);
 
         header('Location: /gerar_dieta');
@@ -113,15 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="hipertrofia">Hipertrofia</option>
             </select>
 
-            <select name="tempo" required style="width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:5px;">
-                <option value="">-- Tempo para a meta --</option>
-                <option value="1">1 mês</option>
-                <option value="3">3 meses</option>
-                <option value="6">6 meses</option>
-                <option value="12">12 meses</option>
-            </select>
-
-            <!-- Novo campo de atividade física -->
             <select name="atividade" required style="width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:5px;">
                 <option value="">-- Nível de Atividade Física --</option>
                 <option value="1.2">Sedentário (Pouco ou nenhum exercício)</option>
@@ -131,12 +118,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="1.9">Extremamente ativo (exercício intenso diário)</option>
             </select>
 
+            <input type="number" name="tempo" placeholder='Tempo da Meta (em meses)' min="1" required style="width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:5px;">
+
             <p><strong>🍽️ Preferência de Alimentos:</strong> <small>(Separe por vírgula)</small></p>
-            <input type="text" name="Proteínas"    placeholder="Proteínas"    style="width:100%;margin-bottom:8px;"><br>
+            <input type="text" name="Proteínas" placeholder="Proteínas" style="width:100%;margin-bottom:8px;"><br>
             <input type="text" name="Carboidratos" placeholder="Carboidratos" style="width:100%;margin-bottom:8px;"><br>
-            <input type="text" name="Legumes"      placeholder="Legumes"      style="width:100%;margin-bottom:8px;"><br>
-            <input type="text" name="Verduras"     placeholder="Verduras"     style="width:100%;margin-bottom:8px;"><br>
-            <input type="text" name="Frutas"       placeholder="Frutas"       style="width:100%;margin-bottom:8px;"><br>
+            <input type="text" name="Legumes" placeholder="Legumes" style="width:100%;margin-bottom:8px;"><br>
+            <input type="text" name="Verduras" placeholder="Verduras" style="width:100%;margin-bottom:8px;"><br>
+            <input type="text" name="Frutas" placeholder="Frutas" style="width:100%;margin-bottom:8px;"><br>
 
             <p><strong>⚠️ Alergias/Intolerâncias:</strong></p>
             <?php

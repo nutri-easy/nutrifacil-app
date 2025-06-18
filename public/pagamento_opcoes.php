@@ -1,7 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Garante que o usuário esteja logado
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: /login');
     exit;
@@ -15,22 +14,15 @@ $nome = $_SESSION['dados']['nome'] ?? 'Usuário';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $forma = $_POST['forma_pagamento'] ?? '';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $forma = $_POST['forma_pagamento'] ?? '';
-
-    if (in_array($forma, ['pix', 'cartao', 'boleto', 'simulado'])){
-        // Atualiza método e status no banco
+    if (in_array($forma, ['pix', 'cartao', 'boleto', 'simulado'])) {
         $stmt = $pdo->prepare("UPDATE pagamentos SET metodo = ?, status = 'confirmado' WHERE usuario_id = ? ORDER BY id DESC LIMIT 1");
         $stmt->execute([$forma, $_SESSION['usuario_id']]);
 
-        // Salva na sessão
         $_SESSION['forma_pagamento'] = $forma;
         $_SESSION['pagamento_confirmado'] = true;
 
-        // Redireciona para envio
         header("Location: /envio_dieta");
         exit;
-    }
     }
 }
 ?>
@@ -49,10 +41,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div style="margin-top: 30px;">
             <h3>📱 Pix</h3>
-            <p>Escaneie o QR Code abaixo para realizar o pagamento:</p>
-            <div style="text-align:center;">
+            <button type="button" onclick="mostrarPix()" style="background:#2b7a2b;color:white;padding:12px 20px;border:none;border-radius:6px;font-weight:bold;">
+                Pagar com Pix
+            </button>
+            <div id="pix-container" style="display:none; text-align:center; margin-top:20px;">
+                <p>Escaneie o QR Code abaixo para realizar o pagamento:</p>
                 <img src="/img/qrcode-pix-simulado.png" alt="QR Code Pix" style="width:220px;">
                 <p style="margin-top:10px;font-size:13px;color:#555;">Chave Pix: <strong>nutrifacil@pagamento.com</strong></p>
+                <form method="post" style="margin-top:10px;">
+                    <input type="hidden" name="forma_pagamento" value="pix">
+                    <button type="submit" style="background:#2b7a2b;color:white;padding:10px 20px;border:none;border-radius:6px;font-weight:bold;">
+                        Confirmar Pagamento Pix
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -83,6 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                style="display:inline-block;background:#444;color:#fff;padding:12px 25px;border-radius:6px;text-decoration:none;font-weight:bold;">
                 Gerar Boleto
             </a>
+            <form method="post" style="margin-top:10px;">
+                <input type="hidden" name="forma_pagamento" value="boleto">
+                <button type="submit" style="background:#2b7a2b;color:white;padding:10px 20px;border:none;border-radius:6px;font-weight:bold;">
+                    Confirmar Pagamento Boleto
+                </button>
+            </form>
         </div>
 
         <form method="post" style="margin-top:30px;">
@@ -96,5 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="/dashboard" style="color:#007bff;">⬅ Voltar</a>
         </div>
     </div>
+
+    <script>
+    function mostrarPix() {
+        document.getElementById('pix-container').style.display = 'block';
+    }
+    </script>
 </body>
 </html>

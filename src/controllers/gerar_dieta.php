@@ -23,9 +23,20 @@ $idade     = $_SESSION['dados']['idade'];
 $atividade = isset($_SESSION['dados']['atividade']) ? floatval($_SESSION['dados']['atividade']) : 1.2;
 
 $alergias_array = $_SESSION['restricoes']['alergias'] ?? [];
+$preferencias = $_SESSION['restricoes']['preferencias'] ?? [];
+
+// Corrige caso as preferências venham como string
+if (is_string($preferencias)) {
+    $preferencias = array_map('trim', explode(',', $preferencias));
+}
+
+// Corrige caso "Nenhuma" esteja junto com outras alergias
+if (in_array('Nenhuma', $alergias_array) && count($alergias_array) > 1) {
+    $alergias_array = array_diff($alergias_array, ['Nenhuma']);
+}
+
 $alergias_texto = empty($alergias_array) ? 'Nenhuma' : implode(', ', $alergias_array);
 $refeicoes_por_dia = $_SESSION['restricoes']['refeicoes'] ?? 4;
-$preferencias = $_SESSION['restricoes']['preferencias'] ?? [];
 
 $bmr = ($sexo === 'masculino')
     ? 10 * $peso + 6.25 * $altura - 5 * $idade + 5
@@ -79,6 +90,7 @@ foreach ($meals as $titulo => $pct) {
 
     foreach ($prioridadePorRefeicao[$titulo] as $cat) {
         if ($itensAdicionados >= $maxItensPorRefeicao[$titulo]) break;
+        if (!in_array($cat, $allowedByDiet)) continue;
 
         $whereAlergia = "";
         $params = [];
@@ -86,90 +98,54 @@ foreach ($meals as $titulo => $pct) {
         if (!empty($alergias_array)) {
             $whereAlergiaParts = [];
             foreach ($alergias_array as $alergia) {
-                $whereAlergiaParts[] = " (alergias IS NULL OR alergias NOT LIKE ?) ";
+                $whereAlergiaParts[] = " (alergias IS NULL OR alergias = '' OR alergias NOT LIKE ?) ";
                 $params[] = "%$alergia%";
             }
             $whereAlergia = " AND " . implode(" AND ", $whereAlergiaParts);
         }
 
-        if ($cat === 'CarboidratoPrioritario') {
+        $f = null;
+
+        // Tentativa 1: com preferências
+        if (!empty($preferencias)) {
+            $wherePrefParts = [];
+            foreach ($preferencias as $pref) {
+                $wherePrefParts[] = " nome LIKE ? ";
+                $params[] = "%$pref%";
+            }
+            $wherePrefSQL = implode(" OR ", $wherePrefParts);
+
             $sql = "
                 SELECT nome, calorias
                 FROM alimentos
-                WHERE categoria = 'Carboidrato'
-                  AND (nome LIKE '%Pão%' OR nome LIKE '%Aveia%')
+                WHERE categoria = ?
+                  AND ($wherePrefSQL)
                   $whereAlergia
                 ORDER BY ABS(calorias - ?)
                 LIMIT 1
             ";
-            $params[] = $calPorItem;
+            $paramsTry1 = array_merge([$cat], $params, [$calPorItem]);
             $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-
-        } elseif ($cat === 'Proteína Animal' && $chosenDiet !== 'Vegetariana') {
-            if (in_array($titulo, ['Café da Manhã', 'Lanche da Tarde'])) {
-                $sql = "
-                    SELECT nome, calorias
-                    FROM alimentos
-                    WHERE categoria = 'Proteína Animal'
-                      AND (
-                          nome LIKE '%Frango%' OR 
-                          nome LIKE '%Atum%' OR 
-                          nome LIKE '%Ovo%'
-                      )
-                      $whereAlergia
-                    ORDER BY ABS(calorias - ?)
-                    LIMIT 1
-                ";
-                $params[] = $calPorItem;
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-            } else {
-                $sql = "
-                    SELECT nome, calorias
-                    FROM alimentos
-                    WHERE categoria = ?
-                      $whereAlergia
-                    ORDER BY ABS(calorias - ?)
-                    LIMIT 1
-                ";
-                $params = array_merge([$cat], $params, [$calPorItem]);
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-            }
-        } else {
-            if (!in_array($cat, $allowedByDiet)) continue;
-
-            if (!empty($preferencias[$cat])) {
-                $placeholders = implode(',', array_fill(0, count($preferencias[$cat]), '?'));
-                $sql = "
-                    SELECT nome, calorias
-                    FROM alimentos
-                    WHERE categoria = ?
-                      AND nome IN ($placeholders)
-                      $whereAlergia
-                    ORDER BY ABS(calorias - ?)
-                    LIMIT 1
-                ";
-                $params = array_merge([$cat], $preferencias[$cat], $params, [$calPorItem]);
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-            } else {
-                $sql = "
-                    SELECT nome, calorias
-                    FROM alimentos
-                    WHERE categoria = ?
-                      $whereAlergia
-                    ORDER BY ABS(calorias - ?)
-                    LIMIT 1
-                ";
-                $params = array_merge([$cat], $params, [$calPorItem]);
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-            }
+            $stmt->execute($paramsTry1);
+            $f = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
-        $f = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Tentativa 2: sem preferência
+        if (empty($f)) {
+            $sql = "
+                SELECT nome, calorias
+                FROM alimentos
+                WHERE categoria = ?
+                  $whereAlergia
+                ORDER BY ABS(calorias - ?)
+                LIMIT 1
+            ";
+            $paramsTry2 = array_merge([$cat], $params, [$calPorItem]);
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($paramsTry2);
+            $f = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
         if ($f) {
             $cal100 = max(1, $f['calorias']);
             $g = round($calPorItem / $cal100 * 100);
