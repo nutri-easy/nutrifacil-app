@@ -19,9 +19,8 @@ switch ($path) {
     // Avaliação e fluxo nutricional
     case 'dados': include __DIR__ . '/controllers/dados.php'; break;
     case 'gerar_dieta': include __DIR__ . '/controllers/gerar_dieta.php'; break;
-    case 'resumo_dieta': include __DIR__ . '/controllers/resumo_dieta.php'; break;
-    case 'pagamento': include __DIR__ . '/controllers/pagamento.php'; break;
     case 'pagamento_opcoes':include __DIR__ . '/../public/pagamento_opcoes.php'; break;
+    case 'planos': include __DIR__ . '/controllers/planos.php'; break;
     case 'envio_dieta': include __DIR__ . '/controllers/envio_dieta.php'; break;
     case 'resumo_dados': include __DIR__ . '/controllers/resumo_dados.php'; break;
     case 'gerar_pdf': include __DIR__ . '/controllers/gerar_pdf.php'; break;
@@ -34,7 +33,6 @@ switch ($path) {
     case 'historico': include __DIR__ . '/controllers/historico.php'; break;
     case 'conteudos': include __DIR__ . '/controllers/conteudos.php'; break;
     case 'receitas': include __DIR__ . '/controllers/receitas.php'; break;
-    case 'resumo_dieta': include __DIR__ . '/controllers/resumo_dieta.php'; break;
     case 'envio_dieta': include __DIR__ . '/controllers/envio_dieta.php'; break;
     case 'visualizar_dieta': include __DIR__ . '/controllers/visualizar_dieta.php'; break;
     case 'admin': include __DIR__ . '/controllers/admin.php'; break;

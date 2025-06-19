@@ -1,4 +1,4 @@
-<?php
+<?php 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (
@@ -9,8 +9,8 @@ if (
     exit;
 }
 
-$nome       = $_SESSION['dados']['nome'] ?? 'Usuário';
-$refeicoes  = $_SESSION['refeicoes_dia'];
+$nome = $_SESSION['dados']['nome'] ?? 'Usuário';
+$refeicoes = $_SESSION['refeicoes_dia'];
 ?>
 
 <!DOCTYPE html>
@@ -32,10 +32,7 @@ $refeicoes  = $_SESSION['refeicoes_dia'];
         <ul style="padding-left: 18px;">
           <?php foreach ($ref['alimentos'] as $item): ?>
             <li>
-              <?= htmlspecialchars($item['nome']) ?>
-              <?php if (isset($item['gramas'])): ?>
-                (<?= htmlspecialchars($item['gramas']) ?>g)
-              <?php endif; ?>
+              <?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['gramas']) ?>g)
             </li>
           <?php endforeach; ?>
         </ul>

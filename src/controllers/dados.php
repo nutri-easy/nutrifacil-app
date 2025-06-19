@@ -27,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'Frutas'       => array_filter(array_map('trim', explode(',', $_POST['Frutas'] ?? '')))
     ];
     $alergias = $_POST['alergias'] ?? [];
+    $outras_alergias = trim($_POST['outras_alergias'] ?? '');
+    if (!empty($outras_alergias)) {
+        $alergias[] = $outras_alergias;
+    }
 
     $_SESSION['dados'] = [
         'nome'      => $_SESSION['usuario'],
@@ -134,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "<label><input type='checkbox' name='alergias[]' value='" . htmlspecialchars($item) . "'> " . htmlspecialchars($item) . "</label><br>";
             }
             ?>
+            <input type="text" name="outras_alergias" placeholder="Outras alergias ou problemas de saúde" style="width:100%;margin-top:10px;margin-bottom:15px;padding:10px;border:1px solid #ccc;border-radius:5px;">
 
             <button type="submit" class="btn-calcular" style="margin-top:20px;width:100%;padding:12px;background:#2b7a2b;color:white;border:none;border-radius:5px;font-weight:bold;">
                 Gerar Dieta

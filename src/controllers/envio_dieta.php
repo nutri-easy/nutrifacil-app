@@ -29,9 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($refeicoes as $ref) {
         echo "{$ref['titulo']}:\n";
         foreach ($ref['alimentos'] as $item) {
-            $nomeAlim = is_array($item) ? $item['nome'] : $item;
-            $gramas   = is_array($item) && isset($item['gramas']) ? "{$item['gramas']}g" : '';
-            echo "- {$nomeAlim} {$gramas}\n";
+            echo "- {$item['nome']} ({$item['gramas']}g)\n";
         }
         echo "\n";
     }
